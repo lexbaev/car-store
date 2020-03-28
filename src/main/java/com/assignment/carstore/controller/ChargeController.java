@@ -40,6 +40,12 @@ public class ChargeController {
     this.sessionDataStorage = sessionDataStorage;
   }
 
+  /**
+   * Submit a new charging session for the station.
+   *
+   * @param stream
+   * @return
+   */
   @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public ResponseEntity<?> submitSession(InputStream stream) {
@@ -54,6 +60,12 @@ public class ChargeController {
     return new ResponseEntity<>(sessionDataStorage.submitSession(session), HttpStatus.OK);
   }
 
+  /**
+   * Stop charging session.
+   *
+   * @param id
+   * @return
+   */
   @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
   @ResponseBody
   public ResponseEntity<?> stopSession(@PathVariable("id") UUID id) {
@@ -66,12 +78,24 @@ public class ChargeController {
     return new ResponseEntity<>(chargeSession, HttpStatus.OK);
   }
 
+  /**
+   * Retrieve all charging sessions.
+   * @return
+   */
   @RequestMapping(method = RequestMethod.GET)
   @ResponseBody
   public ResponseEntity<Collection<ChargeSession>> retrieveAllSessions() {
     return new ResponseEntity<>(sessionDataStorage.retrieveAllSessions(), HttpStatus.OK);
   }
 
+  /**
+   * Retrieve a summary of submitted charging sessions including:
+   * - totalCount - total number of charging session updates for the last minute;
+   * - startedCount - total number of started charging sessions for the last minute;
+   * - stoppedCount - total number of stopped charging sessions for the last minute.
+   *
+   * @return
+   */
   @RequestMapping(method = RequestMethod.GET, value = "/summary")
   @ResponseBody
   public ResponseEntity<CounterSummary> retrieveSummarySubmittedSessions() {

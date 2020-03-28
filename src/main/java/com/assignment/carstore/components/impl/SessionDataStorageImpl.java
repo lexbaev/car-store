@@ -27,6 +27,11 @@ public class SessionDataStorageImpl implements SessionDataStorage {
   private Map<UUID, ChargeSession> chargeSessionMap = new LinkedHashMap<>();
 
   /**
+   * List of session IDs
+   */
+  private LinkedList<UUID> sessionIdList = new LinkedList<>();
+
+  /**
    * Locks the map for updating.
    */
   private Lock lock = new ReentrantLock();
@@ -36,6 +41,7 @@ public class SessionDataStorageImpl implements SessionDataStorage {
     lock.lock();
     try {
       chargeSessionMap.put(session.getId(), session);
+      sessionIdList.add(session.getId());
     } finally {
       lock.unlock();
     }
@@ -49,10 +55,10 @@ public class SessionDataStorageImpl implements SessionDataStorage {
     try {
       session = chargeSessionMap.get(id);
       sessionValidation(id, session);
-      chargeSessionMap.remove(id);
       session.setStoppedAt(LocalDateTime.now());
       session.setStatus(StatusEnum.FINISHED);
-      chargeSessionMap.put(session.getId(), session);
+      sessionIdList.remove(session.getId());
+      sessionIdList.add(session.getId());
     } finally {
       lock.unlock();
     }
@@ -69,11 +75,16 @@ public class SessionDataStorageImpl implements SessionDataStorage {
     LocalDateTime now = LocalDateTime.now();
     long startedCount = 0, stoppedCount = 0;
 
-    List<UUID> keyList = new ArrayList<>(chargeSessionMap.keySet());
-    for (int i = keyList.size() - 1; i > -1; i--) {
-      ChargeSession session = chargeSessionMap.get(keyList.get(i));
-      if (session.getStatus() == StatusEnum.FINISHED && isChangedLessThanMinuteAgo(now, session.getStoppedAt())) {
-        stoppedCount++;
+    Iterator<UUID> iterator = sessionIdList.descendingIterator();
+    while (iterator.hasNext()) {
+      ChargeSession session = chargeSessionMap.get(iterator.next());
+      if (session.getStatus() == StatusEnum.FINISHED) {
+        if (isChangedLessThanMinuteAgo(now, session.getStoppedAt())) {
+          stoppedCount++;
+        }
+        if (isChangedLessThanMinuteAgo(now, session.getStartedAt())) {
+          startedCount++;
+        }
       } else if (session.getStatus() == StatusEnum.IN_PROGRESS && isChangedLessThanMinuteAgo(now, session.getStartedAt())) {
         startedCount++;
       } else {

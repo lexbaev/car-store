@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.assignment</groupId>
-    <artifactId>car-store</artifactId>
+    <artifactId>car-charging-store</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>car-store</name>
+    <name>car-charging-store</name>
     <description>Store for car charging session entities</description>
 
     <properties>
