@@ -68,19 +68,23 @@ class SessionDataStorageImplTest {
 
   @Test
   void retrieveSummarySubmittedSessions() throws ChargingSessionException {
-    dataStorage.submitSession(new ChargeSession("ABC-12345", LocalDateTime.now().minusMinutes(1)));
-    ChargeSession session = new ChargeSession("ABC-12345", LocalDateTime.now().minusMinutes(2));
-    dataStorage.submitSession(session);
-    dataStorage.submitSession(new ChargeSession("ABC-12345", LocalDateTime.now().minusSeconds(40)));
-    dataStorage.submitSession(new ChargeSession("ABC-12345", LocalDateTime.now().minusSeconds(30)));
-    dataStorage.submitSession(new ChargeSession("ABC-12345", LocalDateTime.now().minusSeconds(20)));
-    dataStorage.submitSession(new ChargeSession("ABC-12345", LocalDateTime.now().minusSeconds(10)));
-    dataStorage.stopSession(session.getId());
-    assertEquals(StatusEnum.FINISHED, session.getStatus());
+    dataStorage.submitSession(new ChargeSession("ABC-1", LocalDateTime.now().minusMinutes(1)));
+    ChargeSession session2 = new ChargeSession("ABC-2", LocalDateTime.now().minusMinutes(2));
+    dataStorage.submitSession(session2);
+    dataStorage.submitSession(new ChargeSession("ABC-3", LocalDateTime.now().minusSeconds(40)));
+    dataStorage.submitSession(new ChargeSession("ABC-4", LocalDateTime.now().minusSeconds(30)));
+    dataStorage.submitSession(new ChargeSession("ABC-5", LocalDateTime.now().minusSeconds(20)));
+    ChargeSession session6 = new ChargeSession("ABC-6", LocalDateTime.now().minusSeconds(10));
+    dataStorage.submitSession(session6);
+    dataStorage.stopSession(session2.getId());
+    dataStorage.stopSession(session6.getId());
+
+    assertEquals(StatusEnum.FINISHED, session2.getStatus());
+    assertEquals(StatusEnum.FINISHED, session6.getStatus());
 
     assertEquals(4, dataStorage.retrieveSummarySubmittedSessions().getStartedCount());
-    assertEquals(1, dataStorage.retrieveSummarySubmittedSessions().getStoppedCount());
-    assertEquals(5, dataStorage.retrieveSummarySubmittedSessions().getTotalCount());
+    assertEquals(2, dataStorage.retrieveSummarySubmittedSessions().getStoppedCount());
+    assertEquals(6, dataStorage.retrieveSummarySubmittedSessions().getTotalCount());
   }
 
   @Test

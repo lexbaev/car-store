@@ -72,8 +72,13 @@ public class SessionDataStorageImpl implements SessionDataStorage {
     List<UUID> keyList = new ArrayList<>(chargeSessionMap.keySet());
     for (int i = keyList.size() - 1; i > -1; i--) {
       ChargeSession session = chargeSessionMap.get(keyList.get(i));
-      if (session.getStatus() == StatusEnum.FINISHED && isChangedLessThanMinuteAgo(now, session.getStoppedAt())) {
-        stoppedCount++;
+      if (session.getStatus() == StatusEnum.FINISHED) {
+        if (isChangedLessThanMinuteAgo(now, session.getStoppedAt())) {
+          stoppedCount++;
+        }
+        if (isChangedLessThanMinuteAgo(now, session.getStartedAt())) {
+          startedCount++;
+        }
       } else if (session.getStatus() == StatusEnum.IN_PROGRESS && isChangedLessThanMinuteAgo(now, session.getStartedAt())) {
         startedCount++;
       } else {
