@@ -78,13 +78,13 @@ public class SessionDataStorageImpl implements SessionDataStorage {
     Iterator<UUID> iterator = sessionIdList.descendingIterator();
     while (iterator.hasNext()) {
       ChargeSession session = chargeSessionMap.get(iterator.next());
-      if (session.getStatus() == StatusEnum.FINISHED && isChangedLessThanMinuteAgo(now, session.getStoppedAt())) {
+      if (session.getStatus() == StatusEnum.IN_PROGRESS && isChangedLessThanMinuteAgo(now, session.getStartedAt())) {
+        startedCount++;
+      } else if (session.getStatus() == StatusEnum.FINISHED && isChangedLessThanMinuteAgo(now, session.getStoppedAt())) {
         stoppedCount++;
         if (isChangedLessThanMinuteAgo(now, session.getStartedAt())) {
           startedCount++;
         }
-      } else if (session.getStatus() == StatusEnum.IN_PROGRESS && isChangedLessThanMinuteAgo(now, session.getStartedAt())) {
-        startedCount++;
       } else {
         break;
       }
