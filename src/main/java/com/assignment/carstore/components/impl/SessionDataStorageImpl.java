@@ -44,11 +44,10 @@ public class SessionDataStorageImpl implements SessionDataStorage {
 
   @Override
   public ChargeSession stopSession(UUID id) throws ChargingSessionException {
+    ChargeSession session = chargeSessionMap.get(id);
+    sessionValidation(id, session);
     lock.lock();
-    ChargeSession session;
     try {
-      session = chargeSessionMap.get(id);
-      sessionValidation(id, session);
       chargeSessionMap.remove(id);
       session.setStoppedAt(LocalDateTime.now());
       session.setStatus(StatusEnum.FINISHED);
