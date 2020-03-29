@@ -1,4 +1,4 @@
-Application which represents a store for car charging sesssion entities.
+Application which represents a store for car charging session entities.
 
 To run the application go to the directory "/car-charging-store" and
 run script "run.cmd" for Windows or "run" for Linux.
@@ -13,3 +13,4 @@ java -jar target/car-charging-store-0.0.1-SNAPSHOT.jar
 Linux:
 ./mvnw package 
 java -jar target/car-charging-store-0.0.1-SNAPSHOT.jar
+
