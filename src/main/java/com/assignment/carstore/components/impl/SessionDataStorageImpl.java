@@ -27,6 +27,11 @@ public class SessionDataStorageImpl implements SessionDataStorage {
   private Map<UUID, ChargeSession> chargeSessionMap = new LinkedHashMap<>();
 
   /**
+   * List of session IDs
+   */
+  private LinkedList<UUID> sessionIdList = new LinkedList<>();
+
+  /**
    * Locks the map for updating.
    */
   private Lock lock = new ReentrantLock();
@@ -36,6 +41,7 @@ public class SessionDataStorageImpl implements SessionDataStorage {
     lock.lock();
     try {
       chargeSessionMap.put(session.getId(), session);
+      sessionIdList.add(session.getId());
     } finally {
       lock.unlock();
     }
@@ -44,14 +50,15 @@ public class SessionDataStorageImpl implements SessionDataStorage {
 
   @Override
   public ChargeSession stopSession(UUID id) throws ChargingSessionException {
-    ChargeSession session = chargeSessionMap.get(id);
-    sessionValidation(id, session);
     lock.lock();
+    ChargeSession session;
     try {
-      chargeSessionMap.remove(id);
+      session = chargeSessionMap.get(id);
+      sessionValidation(id, session);
       session.setStoppedAt(LocalDateTime.now());
       session.setStatus(StatusEnum.FINISHED);
-      chargeSessionMap.put(session.getId(), session);
+      sessionIdList.remove(session.getId());
+      sessionIdList.add(session.getId());
     } finally {
       lock.unlock();
     }
@@ -68,8 +75,7 @@ public class SessionDataStorageImpl implements SessionDataStorage {
     LocalDateTime now = LocalDateTime.now();
     long startedCount = 0, stoppedCount = 0;
 
-    LinkedList<UUID> keyList = new LinkedList<>(chargeSessionMap.keySet());
-    Iterator<UUID> iterator = keyList.descendingIterator();
+    Iterator<UUID> iterator = sessionIdList.descendingIterator();
     while (iterator.hasNext()) {
       ChargeSession session = chargeSessionMap.get(iterator.next());
       if (session.getStatus() == StatusEnum.FINISHED) {

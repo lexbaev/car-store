@@ -53,9 +53,8 @@ class SessionDataStorageImplTest {
 
     dataStorage.stopSession(id0);
 
-    assertEquals(StatusEnum.IN_PROGRESS, ((ChargeSession) dataStorage.retrieveAllSessions().toArray()[0]).getStatus());
-    assertEquals(StatusEnum.FINISHED, ((ChargeSession) dataStorage.retrieveAllSessions().toArray()[1]).getStatus());
-    assertEquals(id0, ((ChargeSession) dataStorage.retrieveAllSessions().toArray()[1]).getId());
+    assertEquals(StatusEnum.FINISHED, ((ChargeSession) dataStorage.retrieveAllSessions().toArray()[0]).getStatus());
+    assertEquals(StatusEnum.IN_PROGRESS, ((ChargeSession) dataStorage.retrieveAllSessions().toArray()[1]).getStatus());
   }
 
   @Test
