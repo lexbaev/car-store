@@ -1,4 +1,4 @@
-Application which represents a store for car charging sesssion entites.
+Application which represents a store for car charging sesssion entities.
 
 To run the application go to the directory "/car-charging-store" and
 run script "run.cmd" for Windows or "run" for Linux.
